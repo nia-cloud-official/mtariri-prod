@@ -63,7 +63,7 @@
                   </div>
 
                   <div class="col-6 col-lg-6">
-                     <form method="post" action="Views/management.php">
+                     <form method="post" action="Views/my.php">
                         <div class="stats-box bg-white mt-3 px-4 py-4 py-md-5">
                            <img class="stats-icon" src="public/assets/images/clients.svg" />
                            <h4 class="stats-title mt-3">My</h4>
@@ -75,7 +75,7 @@
                   </div>
 
                   <div class="col-6 col-lg-6">
-                     <form method="post" action="Views/management.php">
+                     <form method="post" action="Views/claims.php">
                         <div class="stats-box bg-white mt-3 px-4 py-4 py-md-5">
                            <img class="stats-icon" src="public/assets/images/projects.svg" />
                            <h4 class="stats-title mt-3">Claim</h4>
@@ -87,7 +87,7 @@
                   </div>
 
                   <div class="col-6 col-lg-6">
-                     <form method="post" action="Views/management.php">
+                     <form method="post" action="Views/accounts.php">
                         <div class="stats-box bg-white mt-3 px-4 py-4 py-md-5">
                            <img class="stats-icon" src="public/assets/images/revenue.svg" />
                            <h4 class="stats-title mt-3">Accounts</h4>
@@ -105,6 +105,7 @@
    </div>
 </section>
 
+<center>
 <div class="container-fluid">
    <div class="row">
       <div class="col">
@@ -123,3 +124,4 @@
       </div>
    </div>
 </div>
+</center>

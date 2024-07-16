@@ -1,9 +1,48 @@
 <?php
 
+session_start();
+
 include 'dbController.php';
 
+class Auth { 
+    private $user_id;
 
+    public function __construct(){}
 
+    public function runQuery($sql,$query){ 
+        $result = mysqli_query($sql,$query);
+        return $result;
+    }
+
+    public function getCredentials($phone){ 
+       $conn = mysqli_connect('localhost','root','','mtariri');
+       $query = "SELECT * FROM `users` WHERE `phone` = $phone";
+       $result = mysqli_query($conn,$query);
+       foreach ($result as $user) {
+         $this->user_id = $user['fullname'];
+       }
+    }
+
+    public function checkAcc($phone){
+        $query = "SELECT * FROM `users` WHERE `phone` = $phone";
+        $conn = mysqli_connect('localhost','root','','mtariri');
+        $result = $this->runQuery($conn,$query);
+        if(empty($result)){ 
+            echo "Not found";
+        }else { 
+            $this->getCredentials($phone);
+            $_SESSION['name'] = $this->user_id;
+            echo $_SESSION['name'];
+            header('Location: ./../home.php');
+        }
+    }
+}
+
+if(isset($_POST['phone'])){ 
+    $phone = $_POST['phone'];
+    $trigger = new Auth();
+    $trigger->checkAcc($phone);
+}
 ?>
 
 <meta charset="utf-8">
@@ -20,20 +59,6 @@ include 'dbController.php';
     rel="stylesheet">
 <link rel="stylesheet" href="./../public/assets/css/splide.min.css">
 <link href="./../public/assets/css/style.css" rel="stylesheet">
-<div class="col-12 col-sm-6 col-md-6 col-lg-3 px-0">
-    <div class="portfolio-item position-relative overflow-hidden">
-        <img class="portfolio-item-img img-fluid w-100" src="./../public/assets/images/portfolio-8.jpg">
-        <div class="portfolio-item-content position-absolute rounded text-center">
-            <div class="position-absolute top-50 start-50 translate-middle">
-                <h3 class="project-title text-white">News Portal</h3>
-                <span class="project-type text-uppercase text-white small">App Design</span>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-</section>
 <section class="services section bg-white">
     <div class="container">
         <div class="row">
@@ -43,6 +68,17 @@ include 'dbController.php';
                     <p class="section-subtitle mt-3 mb-0">
                         Welcome to My Mtariri Funeral Assurance App, Manage and View all your claims from Mtariri.
                     </p>
+                    <section class="section">
+                        <div class="container">
+                            <form method="post" action="">
+                                <label for="Phone Number">Your Phone Number</label>
+                                <input type="tel" class="form-control" name="phone" placeholder="" id="">
+                                <button type="submit" class="btn btn-warning mt-4 d-inline-block fw-bold shadow-sm"
+                                style="width:100%">Continue &rightarrow;</button>
+                            </form>
+                        </div>
+                    </section>
+
                 </div>
             </div>
         </div>

@@ -23,6 +23,11 @@ class Database {
             $status = false;
             echo " An error occurred";
         }
-        return $status;
+        return $this->conn;
+    }
+
+    public function runQuery($sql,$query){ 
+        $result = mysqli_query($sql,$query);
+        return $result;
     }
 }
