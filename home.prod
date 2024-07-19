@@ -8,7 +8,7 @@ session_start();
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
    <title>My Mtariri - Mobile</title>
-   <link rel="icon" href="public/assets/images/fav.png" sizes="32x32">
+   <link rel="icon" href="https://mtariri-server.netlify.app/public/assets/images/fav.png" sizes="32x32">
    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
@@ -152,7 +152,7 @@ session_start();
    <!-- Navigation -->
    <nav class="navbar navbar-expand-lg navbar-light">
       <a class="navbar-brand" href="#">
-         <img src="public/assets/images/logo.png" alt="My Mtariri">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/logo.png" alt="My Mtariri">
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
@@ -168,9 +168,6 @@ session_start();
             <li class="nav-item">
                <a class="nav-link" href="#">Profile</a>
             </li>
-            <li>
-               <a href="views/policies.php" class="text-dark">My Policies</a>
-            </li>      
             <li class="nav-item">
                <a class="nav-link" href="#">Contact</a>
             </li>
@@ -181,7 +178,7 @@ session_start();
    <div class="container main-container">
       <div class="profile-card">
          <div class="d-flex align-items-center">
-            <img src="public/assets/fruit.png" alt="Profile Image">
+            <img src="https://mtariri-server.netlify.app/public/assets/fruit.png" alt="Profile Image">
             <div class="ml-3">
                <h5><?php echo $_SESSION['name'];?></h5>
                <p class="mb-0">Hello <?php echo $_SESSION['name'];?>👋</p>
@@ -202,7 +199,7 @@ session_start();
       </div>
 
       <div class="menu-item">
-         <img src="public/assets/images/years.svg" alt="Manage Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/years.svg" alt="Manage Icon">
          <div class="ml-3">
             <h6>Manage</h6>
             <p class="mb-0">Policies & Activities</p>
@@ -211,7 +208,7 @@ session_start();
       </div>
 
       <div class="menu-item">
-         <img src="public/assets/images/clients.svg" alt="My Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/clients.svg" alt="My Icon">
          <div class="ml-3">
             <h6>My</h6>
             <p class="mb-0">Services & Plans</p>
@@ -220,7 +217,7 @@ session_start();
       </div>
 
       <div class="menu-item">
-         <img src="public/assets/images/projects.svg" alt="Claim Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/projects.svg" alt="Claim Icon">
          <div class="ml-3">
             <h6>Claim</h6>
             <p class="mb-0">Make a Claim</p>
@@ -229,7 +226,7 @@ session_start();
       </div>
 
       <div class="menu-item">
-         <img src="public/assets/images/revenue.svg" alt="Accounts Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/revenue.svg" alt="Accounts Icon">
          <div class="ml-3">
             <h6>Accounts</h6>
             <p class="mb-0">Manage Accounts</p>
@@ -241,19 +238,19 @@ session_start();
    <!-- Footer -->
    <footer class="footer">
       <a href="#">
-         <img src="public/assets/images/home.png" alt="Home Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/home.png" alt="Home Icon">
          <p>Home</p>
       </a>
       <a href="#">
-         <img src="public/assets/images/piggy-bank.png" alt="Claims Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/piggy-bank.png" alt="Claims Icon">
          <p>Claims</p>
       </a>
       <a href="#">
-         <img src="public/assets/fruit.png" alt="Profile Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/fruit.png" alt="Profile Icon">
          <p>Profile</p>
       </a>
       <a href="#">
-         <img src="public/assets/images/phone-call.png" alt="Contact Icon">
+         <img src="https://mtariri-server.netlify.app/public/assets/images/phone-call.png" alt="Contact Icon">
          <p>Contact</p>
       </a>
    </footer>
@@ -263,3 +260,5 @@ session_start();
    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+https://mtariri-server.netlify.app/

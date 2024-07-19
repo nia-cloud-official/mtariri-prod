@@ -1,7 +1,11 @@
-<?php 
+<?php
+session_start(); 
 
-if(!$_SESSION['name']) { 
+if (!isset($_SESSION['name'])) {
     header('Location: ./controllers/auth.php');
-}else { 
+    exit(); 
+} else {
     header('Location: ./home.php');
+    exit(); 
 }
+?>

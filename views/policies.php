@@ -1,17 +1,58 @@
 <?php 
-
 session_start();
+include './../controllers/dbController.php';
 
+// Handle form submissions
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['add_policy'])) {
+        // Add policy
+        $phone_number = $_POST['phone_number'];
+        $policy_number = $_POST['policy_number'];
+        $start_date = $_POST['start_date'];
+        $end_date = $_POST['end_date'];
+        $details = $_POST['details'];
+
+        $stmt = $conn->prepare("INSERT INTO policies (phone_number, policy_number, start_date, end_date, details) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $phone_number, $policy_number, $start_date, $end_date, $details);
+        $stmt->execute();
+        $stmt->close();
+    } elseif (isset($_POST['update_policy'])) {
+        // Update policy
+        $id = $_POST['id'];
+        $policy_number = $_POST['policy_number'];
+        $start_date = $_POST['start_date'];
+        $end_date = $_POST['end_date'];
+        $details = $_POST['details'];
+
+        $stmt = $conn->prepare("UPDATE policies SET policy_number = ?, start_date = ?, end_date = ?, details = ? WHERE id = ?");
+        $stmt->bind_param("ssssi", $policy_number, $start_date, $end_date, $details, $id);
+        $stmt->execute();
+        $stmt->close();
+    } elseif (isset($_POST['delete_policy'])) {
+        // Delete policy
+        $id = $_POST['id'];
+
+        $stmt = $conn->prepare("DELETE FROM policies WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
+$conn = mysqli_connect("localhost", "root", "", "mtariri");
+$result = $conn->query("SELECT * FROM policies");
 
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-   <title>My Mtariri - Mobile</title>
-   <link rel="icon" href="public/assets/images/fav.png" sizes="32x32">
+   <title>Manage Policies - My Mtariri</title>
+   <link rel="icon" href="./../public/assets/images/fav.png" sizes="32x32">
    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
    <style>
       body {
          font-family: 'Montserrat', sans-serif;
@@ -152,7 +193,7 @@ session_start();
    <!-- Navigation -->
    <nav class="navbar navbar-expand-lg navbar-light">
       <a class="navbar-brand" href="#">
-         <img src="public/assets/images/logo.png" alt="My Mtariri">
+         <img src="./../public/assets/images/logo.png" alt="My Mtariri">
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
@@ -168,9 +209,6 @@ session_start();
             <li class="nav-item">
                <a class="nav-link" href="#">Profile</a>
             </li>
-            <li>
-               <a href="views/policies.php" class="text-dark">My Policies</a>
-            </li>      
             <li class="nav-item">
                <a class="nav-link" href="#">Contact</a>
             </li>
@@ -181,10 +219,10 @@ session_start();
    <div class="container main-container">
       <div class="profile-card">
          <div class="d-flex align-items-center">
-            <img src="public/assets/fruit.png" alt="Profile Image">
+            <img src="./../public/assets/fruit.png" alt="Profile Image">
             <div class="ml-3">
-               <h5><?php echo $_SESSION['name'];?></h5>
-               <p class="mb-0">Hello <?php echo $_SESSION['name'];?>👋</p>
+               <h5><?php echo $_SESSION['name']; ?></h5>
+               <p class="mb-0">Hello <?php echo $_SESSION['name']; ?>👋</p>
             </div>
          </div>
          <button class="btn btn-warning">Logout</button>
@@ -192,47 +230,50 @@ session_start();
 
       <div class="card">
          <div class="card-body">
-            <h5 class="card-title">Claim Assistance</h5>
-            <p class="card-text">Let's figure out how we can still help you.</p>
+            <h5 class="card-title">Welcome to Policies</h5>
+            <p class="card-text">Manage all your policies here!</p>
             <div class="d-flex justify-content-between">
-               <button class="btn btn-outline-warning">Your plans</button>
-               <button class="btn btn-warning">Track Claims</button>
+                <form method="post" action="./../home.php">
+                <button class="btn btn-outline-warning">&leftarrow; Back</button>
+                </form>
+               <form action="" method="post">
+               <button class="btn btn-warning">Add new Policy</button>
+               </form>
             </div>
          </div>
       </div>
 
-      <div class="menu-item">
-         <img src="public/assets/images/years.svg" alt="Manage Icon">
-         <div class="ml-3">
-            <h6>Manage</h6>
-            <p class="mb-0">Policies & Activities</p>
-         </div>
-         <button class="btn btn-warning">&rightarrow;</button>
-      </div>
+      <?php
+       $userlc = $_SESSION['phone_number'];
 
+       // Prepare the SQL statement with a placeholder
+       $query = "SELECT * FROM policies WHERE phone_number = ?";
+       
+       // Initialize the prepared statement
+       $stmt = $conn->prepare($query);
+       
+       // Bind the parameter (s for string type)
+       $stmt->bind_param("s", $userlc);
+       
+       // Execute the statement
+       $stmt->execute();
+       
+       // Get the result
+       $result = $stmt->get_result();
+       
+       // Fetch all rows
+       $policies = $result->fetch_all(MYSQLI_ASSOC);
+       
+       foreach ($policies as $policy) {
+       }
+       ?>
       <div class="menu-item">
-         <img src="public/assets/images/clients.svg" alt="My Icon">
-         <div class="ml-3">
-            <h6>My</h6>
-            <p class="mb-0">Services & Plans</p>
+      <div class="ml-3">
+            <h6><?php echo $policy['start_date'];?></h6>
+            <p class="mb-0"><?php echo $policy['policy_number'];?></p>
          </div>
-         <button class="btn btn-warning">&rightarrow;</button>
-      </div>
-
-      <div class="menu-item">
-         <img src="public/assets/images/projects.svg" alt="Claim Icon">
          <div class="ml-3">
-            <h6>Claim</h6>
-            <p class="mb-0">Make a Claim</p>
-         </div>
-         <button class="btn btn-warning">&rightarrow;</button>
-      </div>
-
-      <div class="menu-item">
-         <img src="public/assets/images/revenue.svg" alt="Accounts Icon">
-         <div class="ml-3">
-            <h6>Accounts</h6>
-            <p class="mb-0">Manage Accounts</p>
+            <p class="mb-0"><?php echo $policy['details'];?></p>
          </div>
          <button class="btn btn-warning">&rightarrow;</button>
       </div>
@@ -241,19 +282,19 @@ session_start();
    <!-- Footer -->
    <footer class="footer">
       <a href="#">
-         <img src="public/assets/images/home.png" alt="Home Icon">
+         <img src="./../public/assets/images/home.png" alt="Home Icon">
          <p>Home</p>
       </a>
       <a href="#">
-         <img src="public/assets/images/piggy-bank.png" alt="Claims Icon">
+         <img src="./../public/assets/images/piggy-bank.png" alt="Claims Icon">
          <p>Claims</p>
       </a>
       <a href="#">
-         <img src="public/assets/fruit.png" alt="Profile Icon">
+         <img src="./../public/assets/fruit.png" alt="Profile Icon">
          <p>Profile</p>
       </a>
       <a href="#">
-         <img src="public/assets/images/phone-call.png" alt="Contact Icon">
+         <img src="./../public/assets/images/phone-call.png" alt="Contact Icon">
          <p>Contact</p>
       </a>
    </footer>
