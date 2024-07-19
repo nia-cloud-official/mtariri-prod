@@ -29,6 +29,18 @@ class Auth {
         $result = $this->runQuery($conn,$query);
         if(empty($result)){ 
             echo "Not found";
+             // User not found, add new user
+             $insertQuery = "INSERT INTO `users` (phone_number) VALUES ('$phone')";
+             mysqli_query($conn, $insertQuery);
+             // Retrieve and set credentials (assuming getCredentials sets $this->user_id)
+             $this->getCredentials($phone);
+             // Set session variables
+             $_SESSION['name'] = $this->user_id;
+             $_SESSION['phone_number'] = $phone;
+
+    // Redirect to home page
+    header('Location: ./../home.php');
+    exit;
         }else { 
             $this->getCredentials($phone);
             $_SESSION['name'] = $this->user_id;
