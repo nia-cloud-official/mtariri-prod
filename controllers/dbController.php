@@ -11,10 +11,10 @@ class Database {
     }
 
     public function establishConnection(){
-        $this->host = 'localhost';
-        $this->username = 'root';
-        $this->password = '';
-        $this->dbName = 'mtariri';
+        $this->host = 'fdb1030.awardspace.net';
+        $this->username = 'sql12721141';
+        $this->password = 'JBdRN9A7AP';
+        $this->dbName = 'sql12721141';
         $this->conn = mysqli_connect($this->host, $this->username, $this->password, $this->dbName);
         if(!mysqli_error($this->conn)) { 
             $status = true;

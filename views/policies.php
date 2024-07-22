@@ -6,28 +6,42 @@ include './../controllers/dbController.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['add_policy'])) {
         // Add policy
+        $full_name = $_POST['full_name'];
+        $id_number = $_POST['id_number'];
         $phone_number = $_POST['phone_number'];
-        $policy_number = $_POST['policy_number'];
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
-        $details = $_POST['details'];
+        $premium_amount = $_POST['premium_amount'];
+        $beneficiary_name = $_POST['beneficiary_name'];
 
-        $stmt = $conn->prepare("INSERT INTO policies (phone_number, policy_number, start_date, end_date, details) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $phone_number, $policy_number, $start_date, $end_date, $details);
+        // Generate a random policy number
+        $policy_number = generatePolicyNumber();
+
+        $stmt = $conn->prepare("INSERT INTO policies (policy_number, full_name, id_number, phone_number, start_date, end_date, premium_amount, beneficiary_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssss", $policy_number, $full_name, $id_number, $phone_number, $start_date, $end_date, $premium_amount, $beneficiary_name);
         $stmt->execute();
         $stmt->close();
+
+        // Return a success message or new policy ID
+        echo json_encode(array('status' => 'success', 'message' => 'Policy added successfully', 'policy_number' => $policy_number));
+        exit;
     } elseif (isset($_POST['update_policy'])) {
         // Update policy
         $id = $_POST['id'];
         $policy_number = $_POST['policy_number'];
         $start_date = $_POST['start_date'];
         $end_date = $_POST['end_date'];
-        $details = $_POST['details'];
+        $premium_amount = $_POST['premium_amount'];
+        $beneficiary_name = $_POST['beneficiary_name'];
 
-        $stmt = $conn->prepare("UPDATE policies SET policy_number = ?, start_date = ?, end_date = ?, details = ? WHERE id = ?");
-        $stmt->bind_param("ssssi", $policy_number, $start_date, $end_date, $details, $id);
+        $stmt = $conn->prepare("UPDATE policies SET policy_number = ?, start_date = ?, end_date = ?, premium_amount = ?, beneficiary_name = ? WHERE id = ?");
+        $stmt->bind_param("sssssi", $policy_number, $start_date, $end_date, $premium_amount, $beneficiary_name, $id);
         $stmt->execute();
         $stmt->close();
+
+        // Return a success message or updated policy ID
+        echo json_encode(array('status' => 'success', 'message' => 'Policy updated successfully'));
+        exit;
     } elseif (isset($_POST['delete_policy'])) {
         // Delete policy
         $id = $_POST['id'];
@@ -36,10 +50,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $stmt->close();
+
+        // Return a success message or confirmation
+        echo json_encode(array('status' => 'success', 'message' => 'Policy deleted successfully'));
+        exit;
     }
 }
 
-$conn = mysqli_connect("localhost", "root", "", "mtariri");
+// Function to generate a random policy number
+function generatePolicyNumber() {
+    // Generate a random 10-character alphanumeric policy number
+    $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $policy_number = '';
+    $max = strlen($characters) - 1;
+    for ($i = 0; $i < 10; $i++) {
+        $policy_number .= $characters[mt_rand(0, $max)];
+    }
+    return $policy_number;
+}
+
+// Database connection
+$conn = mysqli_connect("sql12.freesqldatabase.com", "sql12721141", "JBdRN9A7AP", "sql12721141");
 $result = $conn->query("SELECT * FROM policies");
 
 ?>
@@ -98,15 +129,6 @@ $result = $conn->query("SELECT * FROM policies");
       }
       .footer img:hover {
          transform: rotate(360deg);
-      }
-      .footer p {
-         margin: 0;
-         font-size: 0.75rem;
-         color: #666;
-         transition: color 0.3s ease;
-      }
-      .footer a:hover p {
-         color: #007bff;
       }
       .main-container {
          padding: 1rem;
@@ -207,37 +229,55 @@ $result = $conn->query("SELECT * FROM policies");
                <a class="nav-link" href="#">Claims</a>
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="#">Profile</a>
+               <a class="nav-link" href="./profile.php">Profile</a>
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="#">Contact</a>
+               <a class="nav-link" href="./contact.php">Contact</a>
             </li>
          </ul>
       </div>
    </nav>
 
-   <div class="container main-container">
+   <div class="main-container">
       <div class="profile-card">
-         <div class="d-flex align-items-center">
-            <img src="./../public/assets/fruit.png" alt="Profile Image">
-            <div class="ml-3">
-               <h5><?php echo $_SESSION['name']; ?></h5>
-               <p class="mb-0">Hello <?php echo $_SESSION['name']; ?>👋</p>
-            </div>
+         <div>
+            <h5>Welcome, <?php echo $_SESSION['name']; ?></h5>
+            <p>Manage all your policies here!</p>
          </div>
-         <button class="btn btn-warning">Logout</button>
+         <button class="btn btn-warning" id="add-policy-btn">Add new Policy</button>
       </div>
 
-      <div class="card">
-         <div class="card-body">
-            <h5 class="card-title">Welcome to Policies</h5>
-            <p class="card-text">Manage all your policies here!</p>
-            <div class="d-flex justify-content-between">
-                <form method="post" action="./../home.php">
-                <button class="btn btn-outline-warning">&leftarrow; Back</button>
-                </form>
-               <form action="" method="post">
-               <button class="btn btn-warning">Add new Policy</button>
+      <div id="add-policy-form" style="display: none;">
+         <div class="card">
+            <div class="card-body">
+               <h5 class="card-title">Add New Funeral Policy</h5>
+               <form id="policy-form" method="post" action="">
+                  <input type="hidden" name="add_policy" value="true">
+                  <div class="form-group">
+                     <input type="text" class="form-control" name="full_name" placeholder="Full Name" required>
+                  </div>
+                  <div class="form-group">
+                     <input type="text" class="form-control" name="id_number" placeholder="ID Number" required>
+                  </div>
+                  <div class="form-group">
+                     <input type="text" class="form-control" name="phone_number" placeholder="Phone Number" required>
+                  </div>
+                  <div class="form-group">
+                     <label>Start Date:</label>
+                     <input type="date" class="form-control" name="start_date" required>
+                  </div>
+                  <div class="form-group">
+                     <label>End Date:</label>
+                     <input type="date" class="form-control" name="end_date" required>
+                  </div>
+                  <div class="form-group">
+                     <input type="text" class="form-control" name="premium_amount" placeholder="Premium Amount" required>
+                  </div>
+                  <div class="form-group">
+                     <input type="text" class="form-control" name="beneficiary_name" placeholder="Beneficiary Name" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Save Policy</button>
+                  <button type="button" class="btn btn-secondary" id="cancel-policy-btn">Cancel</button>
                </form>
             </div>
          </div>
@@ -263,25 +303,35 @@ $result = $conn->query("SELECT * FROM policies");
        
        // Fetch all rows
        $policies = $result->fetch_all(MYSQLI_ASSOC);
-       
+       if(!$policies) {
+           echo '<div class="container">';
+           echo '<div class="ml-4">';
+           echo '<center>';
+           echo "<img src='./../public/assets/images/not-found.png'/>";
+           echo '<h6>No policies found</h6>';
+           echo '<center>';
+           echo '</div>';
+           echo '</div>';
+       }else { 
        foreach ($policies as $policy) {
+           echo '<div class="menu-item">';
+           echo '<div class="ml-3">';
+           echo '<h6>' . $policy['start_date'] . '</h6>';
+           echo '<p class="mb-0">' . $policy['policy_number'] . '</p>';
+           echo '</div>';
+           echo '<div class="ml-3">';
+           echo '<p class="mb-0">' . $policy['details'] . '</p>';
+           echo '</div>';
+           echo '<button class="btn btn-warning">&rightarrow;</button>';
+           echo '</div>';
        }
+      }
        ?>
-      <div class="menu-item">
-      <div class="ml-3">
-            <h6><?php echo $policy['start_date'];?></h6>
-            <p class="mb-0"><?php echo $policy['policy_number'];?></p>
-         </div>
-         <div class="ml-3">
-            <p class="mb-0"><?php echo $policy['details'];?></p>
-         </div>
-         <button class="btn btn-warning">&rightarrow;</button>
-      </div>
    </div>
 
    <!-- Footer -->
    <footer class="footer">
-      <a href="#">
+      <a href="./../home.php">
          <img src="./../public/assets/images/home.png" alt="Home Icon">
          <p>Home</p>
       </a>
@@ -289,11 +339,11 @@ $result = $conn->query("SELECT * FROM policies");
          <img src="./../public/assets/images/piggy-bank.png" alt="Claims Icon">
          <p>Claims</p>
       </a>
-      <a href="#">
+      <a href="./profile.php">
          <img src="./../public/assets/fruit.png" alt="Profile Icon">
          <p>Profile</p>
       </a>
-      <a href="#">
+      <a href="./contact.php">
          <img src="./../public/assets/images/phone-call.png" alt="Contact Icon">
          <p>Contact</p>
       </a>
@@ -302,5 +352,40 @@ $result = $conn->query("SELECT * FROM policies");
    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   <script>
+      $(document).ready(function() {
+         $('#add-policy-btn').click(function() {
+            $('#add-policy-form').toggle(); // Show/hide the form
+         });
+
+         $('#policy-form').submit(function(e) {
+            e.preventDefault(); // Prevent default form submission
+            var formData = $(this).serialize(); // Serialize form data
+
+            // AJAX request
+            $.ajax({
+               type: 'POST',
+               url: '', // Current URL or PHP script URL
+               data: formData,
+               dataType: 'json', // Expect JSON response
+               success: function(response) {
+                  // Handle success response if needed
+                  console.log(response); // Log response to console
+                  // You may want to update the UI here (e.g., append new policy to list)
+                  $('#add-policy-form').hide(); // Hide form after submission
+                  location.reload(); // Refresh the page to show new policy (optional)
+               },
+               error: function(xhr, status, error) {
+                  // Handle error
+                  console.error(xhr.responseText); // Log error to console
+               }
+            });
+         });
+
+         $('#cancel-policy-btn').click(function() {
+            $('#add-policy-form').hide(); // Hide form on cancel
+         });
+      });
+   </script>
 </body>
 </html>

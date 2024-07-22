@@ -4,59 +4,69 @@ session_start();
 
 include 'dbController.php';
 
-class Auth { 
+class Auth {
     private $user_id;
+    private $conn;
 
-    public function __construct(){}
+    public function __construct() {
+        // Initialize the database connection
+        $this->conn = mysqli_connect('sql12.freesqldatabase.com', 'sql12721141', 'JBdRN9A7AP', 'sql12721141');
 
-    public function runQuery($sql,$query){ 
-        $result = mysqli_query($sql,$query);
+        // Check connection
+        if (mysqli_connect_errno()) {
+            die("Failed to connect to MySQL: " . mysqli_connect_error());
+        }
+    }
+
+    public function runQuery($query) {
+        $result = mysqli_query($this->conn, $query);
         return $result;
     }
 
-    public function getCredentials($phone){ 
-       $conn = mysqli_connect('localhost','root','','mtariri');
-       $query = "SELECT * FROM `users` WHERE `phone_number` = $phone";
-       $result = mysqli_query($conn,$query);
-       foreach ($result as $user) {
-         $this->user_id = $user['name'];
-       }
+    public function getCredentials($phone) {
+        $query = "SELECT * FROM `users` WHERE `phone_number` = '$phone'";
+        $result = $this->runQuery($query);
+        foreach ($result as $user) {
+            $this->user_id = $user['name'];
+        }
     }
 
-    public function checkAcc($phone){
-        $query = "SELECT * FROM `users` WHERE `phone_number` = $phone";
-        $conn = mysqli_connect('localhost','root','','mtariri');
-        $result = $this->runQuery($conn,$query);
-        if(empty($result)){ 
+    public function checkAcc($phone) {
+        $query = "SELECT * FROM `users` WHERE `phone_number` = '$phone'";
+        $result = $this->runQuery($query);
+        
+        if (mysqli_num_rows($result) == 0) {
             echo "Not found";
-             // User not found, add new user
-             $insertQuery = "INSERT INTO `users` (phone_number) VALUES ('$phone')";
-             mysqli_query($conn, $insertQuery);
-             // Retrieve and set credentials (assuming getCredentials sets $this->user_id)
-             $this->getCredentials($phone);
-             // Set session variables
-             $_SESSION['name'] = $this->user_id;
-             $_SESSION['phone_number'] = $phone;
+            // User not found, add new user
+            $insertQuery = "INSERT INTO `users` (phone_number) VALUES ('$phone')";
+            $this->runQuery($insertQuery);
 
-    // Redirect to home page
-    header('Location: ./../home.php');
-    exit;
-        }else { 
+            // Retrieve and set credentials (assuming getCredentials sets $this->user_id)
+            $this->getCredentials($phone);
+            
+            // Set session variables
+            $_SESSION['name'] = $this->user_id;
+            $_SESSION['phone_number'] = $phone;
+
+            // Redirect to home page
+            header('Location: ./../home.php');
+            exit;
+        } else {
             $this->getCredentials($phone);
             $_SESSION['name'] = $this->user_id;
-            echo $_SESSION['name'];
             $_SESSION['phone_number'] = $phone;
             header('Location: ./../home.php');
         }
     }
 }
 
-if(isset($_POST['phone'])){ 
+if (isset($_POST['phone'])) {
     $phone = $_POST['phone'];
     $trigger = new Auth();
     $trigger->checkAcc($phone);
 }
 ?>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -140,8 +150,8 @@ if(isset($_POST['phone'])){
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
                     <h5 class="text-uppercase">Contact</h5>
                     <ul class="list-unstyled mb-0">
-                        <li><a href="tel:+1234567890" class="text-dark">+123 456 7890</a></li>
-                        <li><a href="mailto:info@mymtariri.com" class="text-dark">info@mymtariri.com</a></li>
+                        <li><a href="tel:+263780309425" class="text-dark">+263 78 030 9425</a></li>
+                        <li><a href="mailto:info@mymtariri.com" class="text-dark">info@mtariri.co.za</a></li>
                     </ul>
                 </div>
             </div>

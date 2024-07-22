@@ -163,7 +163,7 @@ session_start();
                <a class="nav-link" href="#">Home</a>
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="#">Claims</a>
+               <a class="nav-link" href="./views/claims.php">Claims</a>
             </li>
             <li class="nav-item">
                <a class="nav-link" href="#">Profile</a>
@@ -187,7 +187,9 @@ session_start();
                <p class="mb-0">Hello <?php echo $_SESSION['name'];?>👋</p>
             </div>
          </div>
+         <form action="./logout.php" method="post">
          <button class="btn btn-warning">Logout</button>
+         </form>
       </div>
 
       <div class="card">
@@ -201,6 +203,7 @@ session_start();
          </div>
       </div>
 
+      <a style="outline: none;color:black;text-decoration:none;" href="./views/policies.php">
       <div class="menu-item">
          <img src="public/assets/images/years.svg" alt="Manage Icon">
          <div class="ml-3">
@@ -209,6 +212,7 @@ session_start();
          </div>
          <button class="btn btn-warning">&rightarrow;</button>
       </div>
+      </a>
 
       <div class="menu-item">
          <img src="public/assets/images/clients.svg" alt="My Icon">
